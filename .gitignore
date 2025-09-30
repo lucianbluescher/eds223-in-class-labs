@@ -1,3 +1,8 @@
+# Data Files
+week1/data/
+
+.DS_Store
+
 # History files
 .Rhistory
 .Rapp.history
