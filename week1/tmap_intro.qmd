@@ -42,9 +42,10 @@ There are MANY different ways to make maps in R, all with different pros/cons. C
 
 
 ```{r}
-install.packages("sf")
-install.packages("stars")
-install.packages("tmap")
+# Install required packagaes
+#install.packages("sf")
+#install.packages("stars")
+#install.packages("tmap")
 ```
 
 ```{r}
@@ -513,9 +514,13 @@ tm_shape(world_vector) +
           fill.legend  = tm_legend(title = "Regional Income")) +
   tm_title(text = "Global income",
             frame = TRUE)+ 
-  tm_layout(text.fontfamily = "Montserrat",
+  tm_layout(text.fontfamily = "Times",
             style= "beaver",
-            bg.color = "grey95")
+            bg.color = "grey95",
+            earth_boundary.color = "pink",
+            frame.double_line = TRUE,
+            attr.color = "purple")
+  
 ```
 
 
@@ -525,12 +530,20 @@ tm_shape(world_vector) +
 One of the most powerful aspects of `tmap` is the ease of creating interactive maps. `tmap` has two modes `"plot"` which creates static maps and `"view"` which creates interactive maps that can be easily embedded in quarto docs. It's as easy as using the `tmap_mode()`!
 
 ```{r}
+tmap_mode("view")
+```
 
+```{r}
+tm_shape(world_vector) +
+  tm_polygons(fill = "gdp_per_cap",
+              fill.legend = tm_legend(title = "GDP Per Capita"))
 ```
 
 To return to regular plotting mode, simply reset `tmap_mode`.
 
 ```{r}
+
+tmap_mode("plot")
 
 ```
 
@@ -539,7 +552,11 @@ To return to regular plotting mode, simply reset `tmap_mode`.
 Maps can be stored as objects for for adding additional layers and saving programmatically. Maps can be saved directly in `tmap` using the `tm_save()` function. 
 
 ```{r}
+map1 <- tm_shape(world_vector) +
+  tm_polygons(fill = "gdp_per_cap",
+              fill.legend = tm_legend(title = "GDP Per Capita"))
 
+tmap_save(map1, here::here("week1", "tmap-example.png"))
 
 ```
 
