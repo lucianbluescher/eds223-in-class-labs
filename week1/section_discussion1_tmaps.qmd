@@ -1,0 +1,80 @@
+---
+title: "Week 1: Discussion Section
+Making maps with tmap and beyond"
+format: html
+---
+
+```{r}
+# First library all required packages and clear environment
+library(here)
+library(tidyverse)
+library(sf)
+library(stars)
+library(tmap)
+
+rm(list = ls())
+```
+
+```{r}
+
+#Read in the spatial objects for Rapa Nui:
+
+#ei_points: file contains several points on the island
+#Use the pipe operator to filter() output for points representing volcanoes
+ei_points <- st_read(here("data", "easter_island", "ei_points.gpkg")) |> 
+  head(36)
+#ei_points <- filter(type == "volcano")
+
+#ei_elev: raster with elevation data
+ei_elev <- read_stars(here("data", "easter_island", "ei_elev.tif"))
+
+#ei_borders: polygon with the island outline
+ei_borders <- st_read(here("data", "easter_island", "ei_border.gpkg"))
+
+#ei_roads: lines contains a road network for the island
+ei_roads <- st_read(here("data", "easter_island", "ei_roads.gpkg"))
+```
+
+```{r}
+# Create a map of the outline Rapa Nui using tm_shape() + tm_borders()
+tm_shape(ei_borders) +
+  tm_borders() +
+  tm_layout(main.title = "Rapa Nui Outline Map")
+```
+
+```{r}
+# Expand on your single-object map to create a map of Rapa Nui and…
+
+# …denote the island’s borders and continuous elevation
+ei_map <- tm_shape(ei_elev) +
+  tm_graticules() +
+  tm_raster(col.scale = tm_scale_continuous(values = "red_green"),
+            col.legend = tm_legend("Elevation (m asl)")) +
+  tm_shape(ei_borders) + 
+    tm_borders() +
+  tm_shape(ei_roads) + # …denote the island’s volcanoes and roads
+    tm_lines() +
+  tm_shape(ei_points) + # …play with the color palette and essential map elements
+  tm_symbols(shape = 24, 
+               size = "elevation", 
+               size.legend = tm_legend("Volcanoes (m asl)")) +
+  tm_compass(position = c("right", "top")) +
+    tm_scalebar() +
+  tm_title("Easter Island Elevation") +
+  tm_layout(bg = TRUE,
+            bg.color = "lightblue",
+            frame = TRUE)
+           
+              
+
+ei_map
+
+```
+
+```{r}
+# Switch from the default "plot" mode to "view"
+tmap_mode(mode = "view")
+tmap_mode(mode = "plot")
+
+```
+

@@ -549,7 +549,7 @@ tmap_mode("plot")
 
 ## 8. Saving maps
 
-Maps can be stored as objects for for adding additional layers and saving programmatically. Maps can be saved directly in `tmap` using the `tm_save()` function. 
+Maps can be stored as objects for for adding additional layers and saving programmatically. Maps can be saved directly in `tmap` using the `tm_save()` functi
 
 ```{r}
 map1 <- tm_shape(world_vector) +
