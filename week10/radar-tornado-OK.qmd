@@ -1,0 +1,89 @@
+---
+title: "radar-tornado-OK"
+format: html
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(aws.s3)
+library(tidyverse)
+```
+
+```{r}
+# Access the data
+Sys.setenv("AWS_ACCESS_KEY_ID" = "",
+      "AWS_SECRET_ACCESS_KEY" = "",
+      "AWS_DEFAULT_REGION" = "us-east-1"
+)
+```
+
+```{r}
+all_files <- get_bucket_df(
+  bucket = "s3://noaa-swdi-pds/",
+  region = "us-east-1",
+  max = 20000,
+) |> 
+  as_tibble()
+
+all_files
+```
+
+```{r}
+save_object(
+  object = "tvs-2013.csv",
+  bucket = "s3://noaa-swdi-pds/", 
+  region = "us-east-1",
+  file = "tvs-2013.csv"
+)
+```
+
+```{r}
+readr::read_lines("tvs-2013.csv", n_max = 5)
+```
+
+
+```{r}
+library(readr)
+
+tvs <- read_csv(
+  "tvs-2013.csv",
+  comment = "#",     # ignore the comment/header lines
+  col_names = c(
+    "ZTIME", "LON", "LAT", "WSR_ID", "CELL_ID", "CELL_TYPE",
+    "RANGE_NMI", "AZIMUTH_DEG", "AVGDV", "LLDV", "MXDV",
+    "MXDV_HEIGHT_KFT", "DEPTH_MI", "BASE_KFT", "TOP_KFT",
+    "MAX_SHEAR", "MAX_SHEAR_HEIGHT_KFT"
+  )
+)
+```
+
+```{r}
+head(tvs)
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(tvs, aes(x = MAX_SHEAR)) +
+  geom_density(fill = "steelblue3") +
+  labs(
+    title = "Max Shear Distribution (TVS 2013)",
+    x = "Max Shear",
+    y = "Density"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+```{r}
+ggplot(tvs, aes(x = LON, y = LAT)) +
+  geom_point(alpha = 0.15, color = "#1f78b4", size = 0.6) +
+  coord_quickmap(xlim = c(-130, -60), ylim = c(20, 55)) +
+  labs(
+    title = "TVS Detections (2013)",
+    x = "Longitude",
+    y = "Latitude"
+  ) +
+  theme_minimal()
+```
+
